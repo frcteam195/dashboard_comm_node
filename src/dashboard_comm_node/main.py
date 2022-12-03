@@ -4,6 +4,7 @@ import tf2_ros
 import rospy
 import socket
 import json
+import random
 
 UDP_IP = "127.0.0.1"
 UDP_PORT = 41234
@@ -24,7 +25,8 @@ def send(msg):
         sock.sendto( json.dumps(msg).encode("utf-8"), c )
 
 def got_veh_state():
-    send( {"asd":1, "asaaa":"aaa"} )
+    testValue = random.randint(0, 3000)
+    send( {"value": testValue} )
 
 def ros_main(node_name):
     rospy.init_node(node_name)
