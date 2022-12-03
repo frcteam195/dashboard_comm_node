@@ -6,10 +6,12 @@ import socket
 import json
 import random
 
+from threading import Thread
+
 UDP_IP = "127.0.0.1"
 UDP_PORT = 41234
 BUFFER_SIZE  = 1024
-clients = [];
+clients = []
 
 print("UDP target IP: %s" % UDP_IP)
 print("UDP target port: %s" % UDP_PORT)
@@ -28,8 +30,7 @@ def got_veh_state():
     testValue = random.randint(0, 3000)
     send( {"value": testValue} )
 
-def ros_main(node_name):
-    rospy.init_node(node_name)
+def ros_func():
     rate = rospy.Rate(10) # 10hz
 
     while not rospy.is_shutdown():
@@ -40,10 +41,20 @@ def ros_main(node_name):
 
             if address not in clients:
                 print("New Client: " + str(address))
-                clients.append(address);
+                clients.append(address)
         except:
             pass
 
-        got_veh_state();
+        got_veh_state()
 
         rate.sleep()
+
+def ros_main(node_name):
+    rospy.init_node(node_name)
+    
+    t1 = Thread(target=ros_func)
+    t1.start()
+
+    rospy.spin()
+
+    t1.join(5)
