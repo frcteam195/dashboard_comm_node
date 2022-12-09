@@ -4,7 +4,7 @@ import tf2_ros
 import rospy
 import socket
 import json
-import random
+import yaml
 
 from threading import Thread
 
@@ -31,8 +31,18 @@ def send(msg):
 
 
 def send_dashboard_packet():
+    global hmi_updates
     global robot_status
-    send({"robot_status": robot_status.get_message()})
+
+    robot_status_data = ""
+    if robot_status is not None:
+        robot_status_data = robot_status.get_message()
+    
+    hmi_updates_data = ""
+    if hmi_updates.get() is not None:
+        hmi_updates_data = json.loads(json.dumps(yaml.load(str(hmi_updates.get()))))
+
+    send({"robot_status": robot_status_data, "hmi_updates": hmi_updates_data})
 
 
 def ros_func():
