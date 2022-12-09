@@ -37,10 +37,12 @@ def send_dashboard_packet():
     robot_status_data = ""
     if robot_status is not None:
         robot_status_data = robot_status.get_message()
-    
+
     hmi_updates_data = ""
     if hmi_updates.get() is not None:
-        hmi_updates_data = json.loads(json.dumps(yaml.load(str(hmi_updates.get()))))
+        hmi_updates_data = {
+            "gauge_value": hmi_updates.get().gauge_value
+        }
 
     send({"robot_status": robot_status_data, "hmi_updates": hmi_updates_data})
 
