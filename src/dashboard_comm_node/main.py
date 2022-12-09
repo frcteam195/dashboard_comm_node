@@ -8,6 +8,9 @@ import random
 
 from threading import Thread
 
+from frc_robot_utilities_py_node.frc_robot_utilities_py import *
+from frc_robot_utilities_py_node.RobotStatusHelperPy import RobotStatusHelperPy, Alliance, RobotMode
+
 UDP_IP = "127.0.0.1"
 UDP_PORT = 41234
 BUFFER_SIZE  = 1024
@@ -26,18 +29,19 @@ def send(msg):
     for c in clients:
         sock.sendto( json.dumps(msg).encode("utf-8"), c )
 
-def got_veh_state():
-    testValue = random.randint(0, 3000)
-    send( {"value": testValue} )
+def send_dashboard_packet():
+    global hmi_updates
+    global robot_status
+    
+    send({"robot_status": robot_status})
+    pass
 
 def ros_func():
     rate = rospy.Rate(10) # 10hz
 
     while not rospy.is_shutdown():
         try:
-            bytesAddressPair = sock.recvfrom(BUFFER_SIZE)
-            message = bytesAddressPair[0]
-            address = bytesAddressPair[1]
+            message, address = sock.recvfrom(BUFFER_SIZE)
 
             if address not in clients:
                 print("New Client: " + str(address))
@@ -45,7 +49,7 @@ def ros_func():
         except:
             pass
 
-        got_veh_state()
+        send_dashboard_packet()
 
         rate.sleep()
 
