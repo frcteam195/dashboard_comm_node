@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 
+from frc_robot_utilities_py_node.RobotStatusHelperPy import RobotStatusHelperPy, Alliance, RobotMode
+from frc_robot_utilities_py_node.frc_robot_utilities_py import *
+from threading import Thread
 import tf2_ros
 import rospy
 import socket
 import json
-import yaml
-
-from threading import Thread
-
-from frc_robot_utilities_py_node.frc_robot_utilities_py import *
-from frc_robot_utilities_py_node.RobotStatusHelperPy import RobotStatusHelperPy, Alliance, RobotMode
 
 UDP_IP = "0.0.0.0"
 UDP_PORT = 41234
@@ -50,7 +47,7 @@ def loop():
             message, address = sock.recvfrom(BUFFER_SIZE)
 
             if address not in clients:
-                print("New Client: " + str(address))t
+                print("New Client: " + str(address))
                 clients.append(address)
         except:
             pass
