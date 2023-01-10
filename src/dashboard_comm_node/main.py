@@ -35,7 +35,9 @@ def send_dashboard_packet():
     if robot_status is not None:
         robot_status_data = robot_status.get_message()
 
-    send({"robot_status": robot_status_data})
+    send({  "robot_status": robot_status_data, 
+            "starting_position":["one", "two", "three"],
+            "autonomous":["one_disk", "two_disk", "three_disk"]})
 
 
 def loop():
