@@ -2,6 +2,7 @@
 
 from frc_robot_utilities_py_node.RobotStatusHelperPy import RobotStatusHelperPy, Alliance, RobotMode
 from frc_robot_utilities_py_node.frc_robot_utilities_py import *
+from ck_ros_msgs_node.msg import AutonomousConfiguration
 from threading import Thread
 import tf2_ros
 import rospy
@@ -13,6 +14,8 @@ UDP_PORT = 41234
 BUFFER_SIZE = 1024
 clients = []
 
+autonomous_configuration_options = None
+
 print("UDP target IP: %s" % UDP_IP)
 print("UDP target port: %s" % UDP_PORT)
 
@@ -21,6 +24,10 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.setblocking(0)
 sock.bind((UDP_IP, UDP_PORT))
 
+def receive_autonomous_configuration_options(new_autonomous_configuration_options):
+    global autonomous_configuration_options
+    autonomous_configuration_options = new_autonomous_configuration_options
+
 
 def send(msg):
     for c in clients:
@@ -28,6 +35,7 @@ def send(msg):
 
 
 def send_dashboard_packet():
+    global autonomous_configuration_options
     global hmi_updates
     global robot_status
 
@@ -35,9 +43,20 @@ def send_dashboard_packet():
     if robot_status is not None:
         robot_status_data = robot_status.get_message()
 
-    send({  "robot_status": robot_status_data, 
-            "starting_position":["one", "two", "three"],
-            "autonomous":["one_disk", "two_disk", "three_disk"]})
+    
+    autonomous_configuration = ""
+    if autonomous_configuration_options is not None:
+        
+        autonomous_configuration = {
+            "autonomous_options": autonomous_configuration_options.autonomous_options,
+            "game_pieces": autonomous_configuration_options.game_pieces,
+            "starting_positions": autonomous_configuration_options.starting_positions
+        }
+
+    send({
+        "robot_status": robot_status_data,
+        "autonomous_configuration": autonomous_configuration
+        })
 
 
 def loop():
@@ -62,6 +81,8 @@ def loop():
 def ros_main(node_name):
     rospy.init_node(node_name)
     register_for_robot_updates()
+
+    rospy.Subscriber("/AutonomousConfiguration", AutonomousConfiguration, receive_autonomous_configuration_options)
 
     t1 = Thread(target=loop)
     t1.start()
