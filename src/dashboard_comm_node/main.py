@@ -55,7 +55,8 @@ def send_dashboard_packet():
 
     send({
         "robot_status": robot_status_data,
-        "autonomous_configuration": autonomous_configuration
+        "autonomous_configuration": autonomous_configuration,
+        "drive_orientation": "robotOriented"
         })
 
 
