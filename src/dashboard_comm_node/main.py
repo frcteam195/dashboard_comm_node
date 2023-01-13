@@ -76,8 +76,11 @@ def loop():
             message, address = sock.recvfrom(BUFFER_SIZE)
 
             if address not in clients:
-                print("New Client: " + str(address))
+                rospy.loginfo("New Client: " + str(address))
                 clients.append(address)
+
+            rospy.loginfo(message)
+
         except:
             pass
 
