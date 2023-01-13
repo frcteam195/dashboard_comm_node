@@ -43,7 +43,13 @@ def send_dashboard_packet():
     if robot_status is not None:
         robot_status_data = robot_status.get_message()
 
-    
+    hmi_updates_data = ""
+    if hmi_updates.get() is not None:
+        hmi_updates_data = {
+            "drivetrain_forward_back": hmi_updates.get().drivetrain_fwd_back,
+            "drivetrain_left_right": hmi_updates.get().drivetrain_left_right
+        }
+
     autonomous_configuration = ""
     if autonomous_configuration_options is not None:
         
@@ -55,6 +61,7 @@ def send_dashboard_packet():
 
     send({
         "robot_status": robot_status_data,
+        "hmi_updates": hmi_updates_data,
         "autonomous_configuration": autonomous_configuration
         })
 
