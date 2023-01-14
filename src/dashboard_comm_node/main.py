@@ -63,7 +63,8 @@ def send_dashboard_packet():
         "robot_status": robot_status_data,
         "hmi_updates": hmi_updates_data,
         "autonomous_configuration": autonomous_configuration,
-        "drive_orientation": "robotOriented"
+        "drive_orientation": "robotOriented",
+        "faults": ["Fire!", "Help!", ":'("]
         })
 
 
